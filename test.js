@@ -393,8 +393,8 @@ var autograd = {};
 
     function Loss(target, predict){
 
-        this.model = predict;
-        this.out =  - Math.log(predict.out[target]);
+        this.model = predict.out;
+        this.out =  - Math.log(predict.out.out[target]);;
         this.y = target;
     }
 
@@ -426,6 +426,22 @@ var autograd = {};
                     this.model.models[i].update(this.lr);
                 }
             }
+        },
+        grad_zero:  function(){
+
+            for(var i in this.model.models){
+                
+                // console.log(model)
+                if(Object.prototype.hasOwnProperty.call(this.model.models[i],"W")){
+                    // console.log("here")
+                    let len_w = this.model.models[i].W.out.length
+                    let len_b =  this.model.models[i].b.out.length
+
+                    this.model.models[i].W.dout = utils.zeros(len_w);
+                    this.model.models[i].b.dout = utils.zeros(len_b);
+                }
+            }
+
         }
     }
 
